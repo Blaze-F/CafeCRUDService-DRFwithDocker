@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser
 from drf_yasg.utils import swagger_auto_schema
-from cafe_service.decorators.execption_handler import custom_json_response, execption_hanlder
+from cafe_service.decorators.custom_json_response import custom_json_response, execption_hanlder
 
 
 from provider.auth_provider import AuthProvider
@@ -18,7 +18,7 @@ from user.serializers import (
 user_service = UserService()
 auth_provider = AuthProvider()
 
-# TODO CustomResponseJSON 구현
+
 # TODO OwnerCheck 하는 로직 구현 (Service단에)
 
 """
@@ -26,8 +26,8 @@ auth_provider = AuthProvider()
 Returns:
     dict : {
         code : status
-        msg : str
-        response : any
+        message : str
+        response_data : any
     }
 """
 

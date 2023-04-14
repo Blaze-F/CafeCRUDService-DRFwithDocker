@@ -19,6 +19,7 @@ class CafeService:
         expire_date: datetime,
         description: str,
         size: str,
+        user_id: int,
     ) -> dict:
         """
         상품 생성
@@ -37,8 +38,7 @@ class CafeService:
         }
         params = ProducCreateRequestSchema(data=data)
         params.is_valid(raise_exception=True)
-
-        return self.repository.create(**params.data)
+        return self.repository.upsert(data=params.data, user_id=user_id)
 
     def update(
         self,
@@ -50,6 +50,7 @@ class CafeService:
         expire_date: datetime,
         description: str,
         size: str,
+        user_id: int,
     ) -> dict:
         """
         상품 업데이트
@@ -69,21 +70,20 @@ class CafeService:
         }
         params = ProducCreateRequestSchema(data=data)
         params.is_valid(raise_exception=True)
-
-        updated = self.repository.update(data=params.data)
+        updated = self.repository.update(data=data, user_id=user_id)
         return updated
 
-    def get(self, product_id: int) -> dict:
+    def get(self, product_id: int, user_id: int) -> dict:
         """
         Args:
             product_id (int)
         Returns:
             dict: 상품 상세정보
         """
-        return_dict = self.repository.get(product_id=product_id)
+        return_dict = self.repository.get(product_id=product_id, user_id=user_id)
         return return_dict
 
-    def find(self, search_string: str, pages: int) -> list[dict]:
+    def find(self, page: int, user_id: int, search_string="") -> list[dict]:
         """
         검색어를 받아 리스트로 반환합니다.
         Args:
@@ -97,6 +97,6 @@ class CafeService:
 
         pass
 
-    def delete(self, product_id: int) -> str:
-        self.repository.delete(product_id=product_id)
+    def delete(self, product_id: int, user_id: int) -> str:
+        self.repository.delete(product_id=product_id, user_id=user_id)
         pass

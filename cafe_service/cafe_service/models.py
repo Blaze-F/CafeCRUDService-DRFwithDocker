@@ -1,5 +1,7 @@
 from django.db import models
 
+from models import User
+
 
 class BaseModel(models.Model):
     using = "cafe_service"

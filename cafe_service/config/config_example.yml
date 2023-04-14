@@ -1,15 +1,18 @@
 databases:
   host: "localhost"
   port: 3306
-  database: "account_book"
-  username: "db user name"
-  password: "db pw"
+  database: "cafe_service"
+  username: "test"
+  password: "test1234"
   timezone: "+09:00"
 
 secrets:
-  django: "django secret"
+  django: "key please"
 
 token:
   scret: "jwt secret"
   referesh_expire_day: 7
   expire_sec: 3600
+
+pagenation:
+  page_size: 10

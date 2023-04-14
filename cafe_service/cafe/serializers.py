@@ -14,7 +14,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProducCreateRequestSchema(serializers.Serializer):
     """
-    상품 상세정보 요청에 대한 정의입니다.
+    상품 생성 요청에 대한 정의입니다.
     """
 
     name = serializers.CharField(max_length=20, allow_null=False)
@@ -28,7 +28,7 @@ class ProducCreateRequestSchema(serializers.Serializer):
 
 class ProducUpdateRequestSchema(serializers.Serializer):
     """
-    상품 상세정보 요청에 대한 정의입니다.
+    상품 업데이트 요청에 대한 정의입니다.
     """
 
     name = serializers.CharField(max_length=20, allow_null=False)
@@ -40,7 +40,15 @@ class ProducUpdateRequestSchema(serializers.Serializer):
     size = serializers.CharField(max_length=1)
 
 
-class ProductListSerializer(serializers.ListSerializer):
+class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["name", "price", "expire_date"]  # TODO 리스트 직렬화 선택 필드 작성
+
+
+class ProductGetRequestSchema(serializers.Serializer):
+    id = serializers.IntegerField()
+
+
+class ProductSearchRequestSchema(serializers.Serializer):
+    search_string = serializers.CharField(max_length=200, allow_null=True)
