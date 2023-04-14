@@ -12,12 +12,10 @@ class UserSignupSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
-        user = User.objects.create(  # User 생성
-            email=validated_data["email"],
-            username=validated_data["name"],
-        )
+        user = User.objects.create(
+            phone=validated_data["phone"], name=validated_data["name"]
+        )  # User 생성
         user.set_password(validated_data["password"])
-
         user.save()
         return user
 
@@ -27,22 +25,24 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUserModel
         fields = "__all__"
 
+
 class LoginResponseSchema(serializers.Serializer):
     access = serializers.CharField()
-    
+
+
 class UserSignUpSchema(serializers.Serializer):
     """
     user 회원가입 기능 요청 정의 입니다.
     """
 
-    name = serializers.CharField(max_length=20, allow_null=False)
-    email = serializers.CharField(max_length=100, allow_null=False)
+    phone = serializers.CharField(max_length=10, allow_null=False)
     password = serializers.CharField(max_length=255, allow_null=False)
+
 
 class UserLoginSchema(serializers.Serializer):
     """
     user 로그인 기능 요청 정의 입니다.
     """
 
-    email = serializers.CharField(max_length=100, allow_null=False)
+    phone = serializers.CharField(max_length=10, allow_null=False)
     password = serializers.CharField(max_length=255, allow_null=False)
