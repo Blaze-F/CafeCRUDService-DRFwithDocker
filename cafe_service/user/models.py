@@ -1,5 +1,7 @@
 from django.db import models
 
+from cafe_service.cafe_service.models import BaseModel
+
 
 class User(BaseModel):
     name = models.CharField(max_length=20, null=False)
