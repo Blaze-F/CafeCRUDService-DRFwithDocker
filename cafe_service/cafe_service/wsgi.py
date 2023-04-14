@@ -1,5 +1,5 @@
 """
-WSGI config for cafe_service project.
+WSGI config for account_book project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cafe_service.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "account_book.settings")
 
 application = get_wsgi_application()
