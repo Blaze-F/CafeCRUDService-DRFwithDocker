@@ -3,12 +3,13 @@ from cafe.repository import AbstractProductRepo, ProductRepository
 
 
 from cafe.serializers import ProducCreateRequestSchema
+from cafe.serializers import ProducUpdateRequestSchema
 
 
 class CafeService:
     def __init__(self, repo: AbstractProductRepo) -> None:
         # TODO 나중에 의존성 끊기
-        self.repository = ProductRepository
+        self.repository = ProductRepository()
 
     def create(
         self,
@@ -16,7 +17,7 @@ class CafeService:
         price: int,
         cost: int,
         barcode: str,
-        expire_date: datetime,
+        expire_date: str,
         description: str,
         size: str,
         user_id: int,
@@ -32,13 +33,15 @@ class CafeService:
             "price": price,
             "cost": cost,
             "barcode": barcode,
-            "exprie_date": expire_date,
+            "expire_date": expire_date,
             "description": description,
             "size": size,
         }
         params = ProducCreateRequestSchema(data=data)
         params.is_valid(raise_exception=True)
-        return self.repository.upsert(data=params.data, user_id=user_id)
+        created = self.repository.create(data=params.data, user_id=user_id)
+        print(2)
+        return created
 
     def update(
         self,
@@ -64,13 +67,13 @@ class CafeService:
             "price": price,
             "cost": cost,
             "barcode": barcode,
-            "exprie_date": expire_date,
+            "expire_date": expire_date,
             "description": description,
             "size": size,
         }
-        params = ProducCreateRequestSchema(data=data)
+        params = ProducUpdateRequestSchema(data=data)
         params.is_valid(raise_exception=True)
-        updated = self.repository.update(data=data, user_id=user_id)
+        updated = self.repository.update(product_id=data["product_id"], data=data, user_id=user_id)
         return updated
 
     def get(self, product_id: int, user_id: int) -> dict:
@@ -83,7 +86,7 @@ class CafeService:
         return_dict = self.repository.get(product_id=product_id, user_id=user_id)
         return return_dict
 
-    def find(self, page: int, user_id: int, search_string="") -> list[dict]:
+    def find(self, user_id: int, search_string="", page=1) -> list[dict]:
         """
         검색어를 받아 리스트로 반환합니다.
         Args:
@@ -92,11 +95,12 @@ class CafeService:
         Returns:
             list[dict]: 반환되는 리스트 각각의 상품에는 일부 정보만 들어있습니다.
         """
-
-        # TODO 초성검색 구현하기
-
-        pass
+        context, serialized = self.repository.find_page(
+            user_id=user_id, search_string=search_string, page=page
+        )
+        return_list = [context, serialized]
+        return return_list
 
     def delete(self, product_id: int, user_id: int) -> str:
         self.repository.delete(product_id=product_id, user_id=user_id)
-        pass
+        return "success"

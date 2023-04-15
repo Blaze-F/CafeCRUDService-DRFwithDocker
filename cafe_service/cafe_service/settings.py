@@ -140,6 +140,6 @@ SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "SECURITY_DEFINITIONS": {
         "Basic": {"type": "basic"},
-        "Bearer": {"type": "JWT Token", "name": "Authorization", "in": "header"},
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"},
     },
 }

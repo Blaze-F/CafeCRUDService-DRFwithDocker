@@ -21,8 +21,6 @@ user_service = UserService(user_repo)
 auth_provider = AuthProvider()
 
 
-# TODO OwnerCheck 하는 로직 구현 (Service단에)
-
 """
 모든 return은 custom_json_response 데코레이터에서 처리할 수 있게 딕셔너리 형태로 했습니다.
 Returns:
@@ -80,12 +78,13 @@ def signup(request):
 # JsonResponse(created_user, status=status.HTTP_201_CREATED)
 
 
-@swagger_auto_schema(method="delete", request_body="token : token", responses={202: "logouted"})
+@swagger_auto_schema(method="delete")
 @api_view(["DELETE"])
 @custom_json_response()
 @parser_classes([JSONParser])
-def login(request):
-    auth_provider.logout(request.token)
+def logout(request):
+    auth_token = auth_provider.get_token_from_request(request=request)
+    auth_provider.logout(auth_token)
     return
 
 

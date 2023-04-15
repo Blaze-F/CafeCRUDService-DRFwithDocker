@@ -6,12 +6,13 @@ from user.repository import UserRepo
 class UserService:
     def __init__(self, repo: UserRepo) -> None:
         self.repo = repo
+        self.auth_provider = AuthProvider()
 
-    def create(self, email: str, password: str, name: str) -> Dict[str, any]:
-        password = AuthProvider.hashpw(password)
+    def create(self, phone: str, password: str, name: str) -> Dict[str, any]:
+        password = self.auth_provider.hashpw(password=password)
         created_user = self.repo.create(
             name=name,
-            email=email,
+            phone=phone,
             password=password,
         )
         return created_user

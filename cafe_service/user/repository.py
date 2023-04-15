@@ -16,6 +16,12 @@ class UserRepo(AbstractUserRepo):
         except self.model.DoesNotExist:
             raise NotFoundError
 
+    def get_user_ins(self, user_id: int) -> object:
+        try:
+            return self.model.objects.get(id=user_id)
+        except self.model.DoesNotExist:
+            raise NotFoundError
+
     def get_by_email(self, email: str):
         try:
             return UserSerializer(self.model.objects.get(email=email)).data

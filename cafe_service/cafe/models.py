@@ -15,3 +15,6 @@ class Product(BaseModel):
     description = models.CharField(max_length=200)
     size = models.CharField(null=False, max_length=1, default="S")
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_column="user_id")
+
+    class Meta:
+        db_table = "cafe_product"
