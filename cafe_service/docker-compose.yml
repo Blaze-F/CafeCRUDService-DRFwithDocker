@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test1234
+      MYSQL_DATABASE: cafe_service
+    ports:
+      - "3306:3306"
+
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=cafe_service
+      - DB_USER=root
+      - DB_PASSWORD=test1234
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

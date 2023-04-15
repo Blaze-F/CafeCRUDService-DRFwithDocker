@@ -1,5 +1,5 @@
 from typing import Dict
-from cafe_service.provider.auth_provider import AuthProvider
+from provider.auth_provider import AuthProvider
 from user.repository import UserRepo
 
 

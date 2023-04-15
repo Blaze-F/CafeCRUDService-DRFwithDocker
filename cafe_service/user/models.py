@@ -1,6 +1,6 @@
 from django.db import models
 
-from cafe_service.cafe_service.models import BaseModel
+from cafe_service.models import BaseModel
 
 
 class User(BaseModel):

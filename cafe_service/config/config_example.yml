@@ -1,5 +1,5 @@
 databases:
-  host: "localhost"
+  host: "db"
   port: 3306
   database: "cafe_service"
   username: "test"
@@ -14,5 +14,5 @@ token:
   referesh_expire_day: 7
   expire_sec: 3600
 
-pagenation:
+page_size:
   page_size: 10

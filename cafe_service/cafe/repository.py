@@ -1,12 +1,10 @@
 import datetime
-from cafe_service.cafe.models import Product
-from cafe_service.cafe.serializers import ProductListSerializer, ProductSerializer
-from cafe_service.config.config import Config
-from exceptions import NotFoundError
-from django_barcode.fields import BarcodeField
+from cafe.models import Product
+from cafe.serializers import ProductListSerializer, ProductSerializer
+from config.config import Config
 from numpy import ceil
-
-from repository import UserRepo
+from exceptions import NotFoundError
+from user.repository import UserRepo
 
 
 class AbstractProductRepo:
@@ -75,7 +73,7 @@ class ProductRepository(AbstractProductRepo):
             product_ins.size = data["size"]
             product_ins.save()
         except self.model.DoesNotExist:
-            raise NotFoundError
+            raise NotFoundError("상품이 존재하지 않습니다.")
 
         return self.serializer(product_ins).data
 
@@ -85,7 +83,7 @@ class ProductRepository(AbstractProductRepo):
             product_instance = self.model.objects.get(id=product_id, user=user_ins)
             product_instance.delete()
         except self.model.DoesNotExist:
-            raise NotFoundError
+            raise NotFoundError("상품이 존재하지 않습니다.")
 
     def find_page(self, user_id: int, page: int) -> tuple():
         """
@@ -103,6 +101,6 @@ class ProductRepository(AbstractProductRepo):
             context = [{"page": page, "page_count": page_count}]
             return context, serialized
         except self.model.DoesNotExist:
-            raise NotFoundError
+            raise NotFoundError("상품이 존재하지 않습니다.")
 
     # TODO 초성검색 합쳐버리기

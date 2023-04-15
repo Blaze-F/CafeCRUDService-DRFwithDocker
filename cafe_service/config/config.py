@@ -1,5 +1,7 @@
 import os
+
 import yaml
+
 
 yaml_settings = dict()
 path = os.path.abspath(os.path.dirname(__file__))

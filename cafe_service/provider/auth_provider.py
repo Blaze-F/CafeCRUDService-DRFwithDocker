@@ -47,9 +47,9 @@ class AuthProvider:
         )
         return {"access": encoded_jwt}
 
-    def login(self, email: str, password: str):
+    def login(self, phone: str, password: str):
         try:
-            user = user_repo.get_by_email(email=email)
+            user = user_repo.get_by_phone(phone=phone)
             if self.checkpw(password, user["password"]):
                 return self.create_token(user["id"])
             else:

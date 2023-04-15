@@ -22,6 +22,12 @@ class UserRepo(AbstractUserRepo):
         except self.model.DoesNotExist:
             raise NotFoundError
 
+    def get_by_phone(self, phone: str):
+        try:
+            return UserSerializer(self.model.objects.get(phone=phone)).data
+        except self.model.DoesNotExist:
+            raise NotFoundError
+
     def create(self, phone: str, password: str, name: str):
         serializer = self.serializer(data={"name": name, "password": password, "phone": phone})
         serializer.is_valid(raise_exception=True)

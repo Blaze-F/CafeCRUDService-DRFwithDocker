@@ -3,10 +3,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser
 from drf_yasg.utils import swagger_auto_schema
-from cafe_service.decorators.custom_json_response import custom_json_response, execption_hanlder
+from decorators.custom_json_response import custom_json_response
 
 
 from provider.auth_provider import AuthProvider
+from user.repository import UserRepo
 from user.service import UserService
 from user.serializers import (
     LoginResponseSchema,
@@ -15,7 +16,8 @@ from user.serializers import (
     UserSignupSerializer,
 )
 
-user_service = UserService()
+user_repo = UserRepo()
+user_service = UserService(user_repo)
 auth_provider = AuthProvider()
 
 
@@ -42,11 +44,11 @@ Returns:
 @custom_json_response()
 @parser_classes([JSONParser])
 def login(request):
-    email = request.data["email"]
+    phone = request.data["phone"]
     password = request.data["password"]
-    auth_token = auth_provider.login(email, password)
+    auth_token = auth_provider.login(phone=phone, password=password)
     return {
-        "code": status.HTTP_201_CREATED,
+        "code": status.HTTP_200_OK,
         "message": "반환된 토큰을 헤더에 넣어주세요.",
         "response_data": auth_token,
     }

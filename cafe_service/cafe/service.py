@@ -1,8 +1,8 @@
 import datetime
-from cafe_service.cafe.repository import AbstractProductRepo, ProductRepository
-from django_barcode.fields import BarcodeField
+from cafe.repository import AbstractProductRepo, ProductRepository
 
-from cafe_service.cafe.serializers import ProducCreateRequestSchema
+
+from cafe.serializers import ProducCreateRequestSchema
 
 
 class CafeService:
@@ -15,7 +15,7 @@ class CafeService:
         name: str,
         price: int,
         cost: int,
-        barcode: BarcodeField,
+        barcode: str,
         expire_date: datetime,
         description: str,
         size: str,
@@ -46,7 +46,7 @@ class CafeService:
         name: str,
         price: int,
         cost: int,
-        barcode: BarcodeField,
+        barcode: str,
         expire_date: datetime,
         description: str,
         size: str,

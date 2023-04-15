@@ -1,4 +1,4 @@
-"""account_book URL Configuration
+"""
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -21,10 +21,10 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Account_book_service_API",
+        title="Cafe_service_API",
         default_version="v1",
         description="NONE",
-        terms_of_service="https://github.com/Blaze-F/account-book-service",
+        terms_of_service="https://github.com/Blaze-F/",
         contact=openapi.Contact(email="daeda766@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
@@ -34,7 +34,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("account_book.urls")),
+    path("", include("cafe.urls")),
     path("", include("user.urls")),
     re_path(
         r"^swagger/$",
