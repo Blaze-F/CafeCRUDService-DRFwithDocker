@@ -88,6 +88,11 @@ def signup(request):
 def logout(request):
     auth_token = auth_provider.get_token_from_request(request=request)
     auth_provider.logout(auth_token)
+    return {
+        "code": status.HTTP_202_ACCEPTED,
+        "message": "로그아웃이 완료되었습니다.",
+        "response_data": None,
+    }
 
 
 # JsonResponse("logouted", status=status.HTTP_202_ACCEPTED)

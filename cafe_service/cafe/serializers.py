@@ -1,12 +1,19 @@
 from rest_framework import serializers
 from django.core.validators import RegexValidator
 from cafe.models import Product
+from cafe.enums import Size
 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+    def validate_size(self, value: str):
+        if Size.has_value(value):
+            return value
+        else:
+            raise serializers.ValidationError("Unkwon size type")
 
 
 class ProducCreateRequestSchema(serializers.Serializer):
@@ -22,9 +29,22 @@ class ProducCreateRequestSchema(serializers.Serializer):
         allow_null=False,
         validators=[RegexValidator(regex="^[0-9]{13}$", message="바코드는 13자리 길이의 숫자입니다.")],
     )
-    expire_date = serializers.CharField()
+    expire_date = serializers.CharField(
+        allow_null=False,
+        validators=[
+            RegexValidator(
+                regex="\d{4}-\d{2}-\d{2}-\d{2}-\d{2}", message="날짜 형식은 yyyy-mm-dd-hh-mm 입니다."
+            )
+        ],
+    )
     description = serializers.CharField()
     size = serializers.CharField(max_length=1)
+
+    def validate_size(self, value: str):
+        if Size.has_value(value):
+            return value
+        else:
+            raise serializers.ValidationError("Unkwon size type")
 
 
 class ProducUpdateRequestSchema(serializers.Serializer):
@@ -52,11 +72,17 @@ class ProducUpdateRequestSchema(serializers.Serializer):
     description = serializers.CharField()
     size = serializers.CharField(max_length=1)
 
+    def validate_size(self, value: str):
+        if Size.has_value(value):
+            return value
+        else:
+            raise serializers.ValidationError("Unkwon size type")
+
 
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ["name", "price", "expire_date"]  # TODO 리스트 직렬화 선택 필드 작성
+        fields = ["name", "price", "expire_date"]
 
 
 # class ProductGetRequestSchema(serializers.Serializer):
