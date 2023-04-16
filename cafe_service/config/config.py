@@ -1,5 +1,7 @@
 import os
+
 import yaml
+
 
 yaml_settings = dict()
 path = os.path.abspath(os.path.dirname(__file__))
@@ -13,6 +15,7 @@ class Config:
     databases: dict = yaml_settings["databases"]
     secrets: dict = yaml_settings["secrets"]
     token: dict = yaml_settings["token"]
+    page_size: dict = yaml_settings["page_size"]
 
 
 config = Config()
