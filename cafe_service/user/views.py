@@ -1,8 +1,8 @@
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser
 from drf_yasg.utils import swagger_auto_schema
+from decorators.auth_handler import must_be_user
 from decorators.custom_json_response import custom_json_response
 
 
@@ -78,14 +78,16 @@ def signup(request):
 # JsonResponse(created_user, status=status.HTTP_201_CREATED)
 
 
-@swagger_auto_schema(method="delete")
+@swagger_auto_schema(
+    method="delete",
+)
 @api_view(["DELETE"])
 @custom_json_response()
+@must_be_user()
 @parser_classes([JSONParser])
 def logout(request):
     auth_token = auth_provider.get_token_from_request(request=request)
     auth_provider.logout(auth_token)
-    return
 
 
 # JsonResponse("logouted", status=status.HTTP_202_ACCEPTED)

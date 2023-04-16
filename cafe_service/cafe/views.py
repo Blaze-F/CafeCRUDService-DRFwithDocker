@@ -114,7 +114,7 @@ def get_product(request):
 @must_be_user()
 def find_product_page(request):
     page_num = request.GET["page"]
-    search_string = request.GET["q"]
+    search_string = request.GET.get("q")
     data = cafe_service.find(user_id=request.user["id"], page=page_num, search_string=search_string)
     return_dict: dict = {
         "code": status.HTTP_200_OK,

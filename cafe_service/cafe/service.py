@@ -90,7 +90,7 @@ class CafeService:
         """
         검색어를 받아 리스트로 반환합니다.
         Args:
-            search_string (str): 검색어(초성 포함)
+            search_string (str): 검색어(초성 가능)
             pages (int): 페이지 넘버 (1부터 시작)
         Returns:
             list[dict]: 반환되는 리스트 각각의 상품에는 일부 정보만 들어있습니다.

@@ -13,9 +13,9 @@ from datetime import timedelta
 from pathlib import Path
 from config.config import config
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -86,7 +86,11 @@ DATABASES = {
         "PASSWORD": config.databases["password"],
         "HOST": config.databases["host"],
         "PORT": config.databases["port"],
-    }
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "use_unicode": True,
+        },
+    },
 }
 
 
@@ -134,7 +138,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 JWT_KEY = config.token["scret"]
 JWT_EXPIRE_TIME = config.token["expire_sec"]
 # REFRESH_TOKEN_LIFETIME: timedelta(days=config.token["referesh_expire_day"])
-
+DEFAULT_CHARSET = "utf-8"
 # Swagger 인증절차
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,

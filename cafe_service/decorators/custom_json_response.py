@@ -25,7 +25,6 @@ def custom_json_response():
     """
     에러 핸들링, 메타데이터 헤더 추가 를 동시에 하는 데코레이터입니다.
     해당 데코레이터 사용시 response를 딕서너리 형태로 바꾸어 주어야 합니다.
-
     Args:
     dict : {
         code : status

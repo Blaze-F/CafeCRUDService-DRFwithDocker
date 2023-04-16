@@ -4,5 +4,19 @@
   },
   "python.formatting.provider": "none",
   "discord.enabled": true,
-  "python.analysis.extraPaths": ["./cafe_service/user"]
+  "python.analysis.extraPaths": [
+    "./cafe_service/user"
+  ],
+  "python.testing.pytestArgs": [
+    "."
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    ".",
+    "-p",
+    "*_test.py"
+  ]
 }
