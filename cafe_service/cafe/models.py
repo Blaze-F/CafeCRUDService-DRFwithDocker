@@ -7,7 +7,7 @@ from user.models import User
 
 
 class Product(BaseModel):
-    name = models.CharField(max_length=20, null=False)
+    name = models.CharField(max_length=20, null=False, db_index=True)
     price = models.IntegerField(null=False)
     cost = models.IntegerField(null=False)
     barcode = models.CharField(max_length=13, null=False)

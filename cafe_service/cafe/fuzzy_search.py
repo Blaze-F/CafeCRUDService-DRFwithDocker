@@ -43,4 +43,4 @@ def make_regex_by_cho(search=""):
         CHO_HANGUL,
         search,
     )
-    return re.compile(f"({regex})", re.IGNORECASE)
+    return f"{regex}"

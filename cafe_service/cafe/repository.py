@@ -7,6 +7,7 @@ from config.config import Config
 from numpy import ceil
 from exceptions import NotFoundError
 from user.repository import UserRepo
+from django.db.models import Q
 
 # -*- coding: utf-8 -*-
 
@@ -90,16 +91,7 @@ class ProductRepository(AbstractProductRepo):
         except self.model.DoesNotExist:
             raise NotFoundError("상품이 존재하지 않습니다.")
 
-    def find_page(
-        self,
-        user_id: int,
-        search_string: str = None,
-        page=1,
-    ) -> tuple:
-        """
-        리스트로 반환합니다. 기본 페이지 값은 config에 상수로 두었습니다.
-        search_string이 들어오면 해당 문자열,초성, 스트링을 정규식으로 바꾸어 필터링을 한번 더 진행합니다.
-        """
+    def find_page(self, user_id: int, search_string: str = None, page=1) -> tuple:
         # page setting
         page_size = Config.page_size["page_size"]
         page_limit = page_size * int(page)
@@ -107,18 +99,19 @@ class ProductRepository(AbstractProductRepo):
 
         # user 인스턴스로 1차 필터링
         user_ins = self.user_repo.get_user_ins(user_id=user_id)
-        products = self.model.objects.filter(user=user_ins)
-
-        # 검색어 존재시 2차 필터링
+        sqs = self.model.objects.filter(user=user_ins)
+        # 검색어 존재시 필터링
         if search_string:
-            search_regex = make_regex_by_cho(search=search_string)
-            products = products.filter(name__regex=search_regex)
+            sqs = sqs.filter(name__icontains=search_string) | sqs.filter(
+                name__regex=make_regex_by_cho(search=search_string)
+            )
+        data_cnt = sqs.count()
+        pagination = sqs.order_by("name")[offset:page_limit]
 
-        debug = list(products.values())
-        data_cnt = products.count()
-        pagination = products.order_by("name")[offset:page_limit]
         serialized = self.serializer(instance=pagination, many=True).data
+
         page_count = ceil(data_cnt / page_size)
+
         context = [{"page": page, "page_count": page_count}]
         return context, serialized
 
