@@ -16,6 +16,9 @@
       - [user](#user)
       - [product](#product)
   * [🛠 개발 조건](#-개발-조건)
+      - [custom_json_response()](#custom_json_response)
+      - [logout](#logout)
+      - [초성검색](#초성검색)
   * [프로젝트 후기](#프로젝트-후기)
 
 
@@ -141,7 +144,7 @@ URL|Method|Description|
 ```
 
 ### "user/signup/"
-####request
+#### request
 핸드폰 번호는 serializer에서 정규식으로 검증합니다.
 ```
 {
@@ -150,7 +153,7 @@ URL|Method|Description|
   "password": "string"
 }
 ```
-####response
+#### response
 ```{
   "meta": {
     "code": 201,
@@ -190,7 +193,7 @@ URL|Method|Description|
 ```
 
 #### response
-
+```
 {
   "meta": {
     "code": 201,
@@ -210,8 +213,8 @@ URL|Method|Description|
     "user": 3
   }
 }
-
-####product/update/
+```
+#### product/update/
 
 #### request
 ```
@@ -249,7 +252,7 @@ URL|Method|Description|
 }
 ```
 
-##product/delete
+## product/delete
 
 #### request
 http://localhost:8000/product/delete/?product_id=89
@@ -266,7 +269,7 @@ http://localhost:8000/product/delete/?product_id=89
 }
 ```
 
-##product/get
+## product/get
 http://localhost:8000/product/get/?product_id=88
 #### response
 ```
@@ -291,7 +294,7 @@ http://localhost:8000/product/get/?product_id=88
 }
 ```
 
-##product/page
+## product/page
 
 #### request -1 (페이지만 요청시)
 http://localhost:8000/product/page/?page=1
@@ -583,8 +586,138 @@ http://localhost:8000/product/page/?page=1&q=%E3%84%B9%E3%84%B8
 }
 ```
 ## 🛠 개발 조건
+### custom_json_response()
+데코레이터 custom_json_response() 에서 view 가 리턴하는 딕셔너리를 jsonresponse으로 전환해서 리턴합니다.
+```python
+def custom_json_response():
+    """
+    에러 핸들링, 메타데이터 헤더 추가 를 동시에 하는 데코레이터입니다.
+    해당 데코레이터 사용시 response를 딕서너리 형태로 바꾸어 주어야 합니다.
+    Args:
+    dict : {
+        code : status
+        message : str
+        response_data : any
+    }
+    """
 
+    def decorator(func):
+        @wraps(func)
+        def wrapper(request, *args, **kwargs):
+            try:
+                data = func(request, *args, **kwargs)
+                code = data["code"]
+                msg = data["message"]
+                response = data["response_data"]
+                response_data = {"meta": {"code": code, "message": msg}, "data": response}
+            except Exception as e:
+                err_msg = e.msg if isinstance(e, CustomBaseExecption) else e.args[0]
+                err_status = e.status if hasattr(e, "status") else status.HTTP_400_BAD_REQUEST
+                response_data = {"meta": {"code": err_status, "message": err_msg}, "data": None}
+            # Return the response as a JsonResponse
+            return JsonResponse(response_data, status=response_data["meta"]["code"])
+
+        return wrapper
+
+    return decorator
+```
+
+### - logout 
+인증은 provider.authProvider 에서 담당합니다.
+```python
+def logout(self, token: str):
+        decoded = self._decode(token)
+        return self.create_token(decoded["id"], is_expired=True)
+
+def create_token(self, user_id: str, is_expired: bool = False):
+    exp = 0 if is_expired else self._get_curr_sec() + self.expire_sec
+    encoded_jwt = jwt.encode(
+        {"id": user_id, "exp": exp},
+        self.key,
+        algorithm="HS256",
+    )
+    return {"access": encoded_jwt}
+```
+로그아웃 요청이 들어오면 유효기간이 0인 토큰을 하나 발급하면서 인증을 갱신함과 동시에 기존 토큰을 말소합니다.
+
+### - 초성검색
+
+```python
+#fuzzy_search.py
+
+CHO_HANGUL = [
+    "ㄱ",
+    "ㄲ",
+    "ㄴ",
+    "ㄷ",
+    "ㄸ",
+    "ㄹ",
+    "ㅁ",
+    "ㅂ",
+    "ㅃ",
+    "ㅅ",
+    "ㅆ",
+    "ㅇ",
+    "ㅈ",
+    "ㅉ",
+    "ㅊ",
+    "ㅋ",
+    "ㅌ",
+    "ㅍ",
+    "ㅎ",
+]
+
+HANGUL_START_CHARCODE = ord("가")
+CHO_PERIOD = int(ord("까") - ord("가"))
+JUNG_PERIOD = int(ord("개") - ord("가"))
+
+
+def combine(cho, jung, jong):
+    return chr(HANGUL_START_CHARCODE + cho * CHO_PERIOD + jung * JUNG_PERIOD + jong)
+
+
+def make_regex_by_cho(search=""):
+    regex = reduce(
+        lambda acc, cho: acc.replace(
+            cho,
+            f"[{combine(CHO_HANGUL.index(cho), 0, 0)}-{combine(CHO_HANGUL.index(cho) + 1, 0, -1)}]",
+        ),
+        CHO_HANGUL,
+        search,
+    )
+    return f"{regex}"
+```
+에서 들어온 초성을 정규식으로 전환해 리턴합니다. 
+```
+input : "ㄱㅊ"
+return : "[가-깋][차-칳]"
+```
+그리고 repo 단에서 해당 정규식으로 이름을 필터링 해 리턴합니다.
+
+```python
+def find_page(self, user_id: int, search_string: str = None, page=1) -> tuple:
+        # page setting
+        page_size = Config.page_size["page_size"]
+        page_limit = page_size * int(page)
+        offset = page_limit - page_size
+
+        # user 인스턴스로 1차 필터링
+        user_ins = self.user_repo.get_user_ins(user_id=user_id)
+        sqs = self.model.objects.filter(user=user_ins)
+        # 검색어 존재시 필터링
+        if search_string:
+            sqs = sqs.filter(name__icontains=search_string) | sqs.filter(
+                name__regex=make_regex_by_cho(search=search_string)
+            )
+        data_cnt = sqs.count()
+        
+        pagination = sqs.order_by("name")[offset:page_limit]
+        serialized = self.serializer(instance=pagination, many=True).data
+        page_count = ceil(data_cnt / page_size)
+        context = [{"page": page, "page_count": page_count}]
+        return context, serialized
+```
 
 ## 프로젝트 후기
-
-
+차후 시간이 되어 해당 프로젝트를 고도화 할 수 있는 기회가 생간다면,
+테스트코드를 좀더 촘촘하게 작성해서 full test 와 unit 테스트를 확실하게 구현해보겠습니다.
