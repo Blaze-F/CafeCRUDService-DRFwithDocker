@@ -106,7 +106,6 @@ class ProductRepository(AbstractProductRepo):
             )
         data_cnt = sqs.count()
         pagination = sqs.order_by("name")[offset:page_limit]
-        debug1 = make_regex_by_cho(search_string)
 
         serialized = self.serializer(instance=pagination, many=True).data
 

@@ -138,7 +138,7 @@ def find_product_page(request):
 @custom_json_response()
 @must_be_user()
 def delete_product(request):
-    cafe_service.delete(product_id=request.data["id"], user_id=request.user["id"])
+    cafe_service.delete(product_id=request.GET["product_id"], user_id=request.user["id"])
     return_dict: dict = {
         "code": status.HTTP_200_OK,
         "message": "상품 삭제 완료.",
