@@ -1,14 +1,11 @@
 import datetime
 from cafe.repository import AbstractProductRepo, ProductRepository
-
-
 from cafe.serializers import ProducCreateRequestSchema
 from cafe.serializers import ProducUpdateRequestSchema
 
 
 class CafeService:
     def __init__(self, repo: AbstractProductRepo) -> None:
-        # TODO 나중에 의존성 끊기
         self.repository = ProductRepository()
 
     def create(
