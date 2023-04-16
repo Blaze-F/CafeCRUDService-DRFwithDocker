@@ -622,7 +622,7 @@ def custom_json_response():
     return decorator
 ```
 
-### - logout 
+### logout 
 인증은 provider.authProvider 에서 담당합니다.
 ```python
 def logout(self, token: str):
@@ -640,7 +640,7 @@ def create_token(self, user_id: str, is_expired: bool = False):
 ```
 로그아웃 요청이 들어오면 유효기간이 0인 토큰을 하나 발급하면서 인증을 갱신함과 동시에 기존 토큰을 말소합니다.
 
-### - 초성검색
+### 초성검색
 
 ```python
 #fuzzy_search.py
