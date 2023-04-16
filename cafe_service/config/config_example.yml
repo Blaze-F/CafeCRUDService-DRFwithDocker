@@ -2,7 +2,7 @@ databases:
   host: "db"
   port: 3306
   database: "cafe_service"
-  username: "test"
+  username: "root"
   password: "test1234"
   timezone: "+09:00"
 
