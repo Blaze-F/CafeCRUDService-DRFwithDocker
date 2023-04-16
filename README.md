@@ -19,6 +19,7 @@
       - [custom_json_response()](#custom_json_response)
       - [logout](#logout)
       - [초성검색](#초성검색)
+      - [검증](#검증)
   * [프로젝트 후기](#프로젝트-후기)
 
 
@@ -719,6 +720,41 @@ def find_page(self, user_id: int, search_string: str = None, page=1) -> tuple:
         context = [{"page": page, "page_count": page_count}]
         return context, serialized
 ```
+
+### 검증
+```python
+class ProducUpdateRequestSchema(serializers.Serializer):
+    """
+    상품 업데이트 요청에 대한 정의입니다.
+    """
+
+    product_id = serializers.IntegerField()
+    name = serializers.CharField(max_length=20, allow_null=False)
+    price = serializers.IntegerField(allow_null=False)
+    cost = serializers.IntegerField(allow_null=False)
+    barcode = serializers.CharField(
+        max_length=13,
+        allow_null=False,
+        validators=[RegexValidator(regex="^[0-9]{13}$", message="바코드는 13자리 길이의 숫자입니다.")],
+    )
+    expire_date = serializers.CharField(
+        allow_null=False,
+        validators=[
+            RegexValidator(
+                regex="\d{4}-\d{2}-\d{2}-\d{2}-\d{2}", message="날짜 형식은 yyyy-mm-dd-hh-mm 입니다."
+            )
+        ],
+    )
+    description = serializers.CharField()
+    size = serializers.CharField(max_length=1)
+
+    def validate_size(self, value: str):
+        if Size.has_value(value):
+            return value
+        else:
+            raise serializers.ValidationError("Unkwon size type")
+```
+대부분은 serializer에서 정규식을 통해 검증합니다. 사이즈는 enum에서 관리합니다.
 
 ## 프로젝트 후기
 차후 시간이 되어 해당 프로젝트를 고도화 할 수 있는 기회가 생간다면,
