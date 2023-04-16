@@ -286,4 +286,6 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/django,visualstudiocode,python
 
 cafe_service/config/config.yml
-.vscode/settings.json
+vscode/
+cafe_service/user/tests/__pycache__/__init__.cpython-310.pyc
+.vscode
